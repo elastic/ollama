@@ -32,7 +32,7 @@ jobs:
           flavor: |
             latest=false
           tags: |
-            type=ref
+            type=ref,event=branch
             type=sha,format=long
       - name: Set Version
         shell: bash
@@ -98,7 +98,7 @@ jobs:
           flavor: |
             latest=false
           tags: |
-            type=ref
+            type=ref,event=branch
             type=sha,format=long
       - name: Set Version
         shell: bash
