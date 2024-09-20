@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - testing
+  workflow_dispatch:
 
 permissions:
   contents: read
