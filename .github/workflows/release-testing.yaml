@@ -3,6 +3,7 @@ name: release testing artifacts
 on:
   push:
     branches:
+      # Branch that we merge proposed changes to for internal testing.
       - testing
   workflow_dispatch:
 
@@ -14,6 +15,8 @@ jobs:
   build-container-image:
     strategy:
       matrix:
+        # Need a real arm64 runner to build llama.cpp since cross-compilation
+        # and emulation aren't practical for it.
         # TODO: Add arm64 runner
         runner:
           - ubuntu-24.04
