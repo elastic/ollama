@@ -14,8 +14,8 @@ jobs:
   build-container-image:
     strategy:
       matrix:
-        # TODO: Add arm64 runner
         runner:
+          - ollama01 # arm64 runner
           - ubuntu-24.04
     runs-on: ${{ matrix.runner }}
     env:
@@ -24,6 +24,22 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+      - name: 'Install Docker'
+        if: ${{ matrix.runner == 'ollama01' }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ca-certificates curl
+          sudo install -m 0755 -d /etc/apt/keyrings
+          sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+          sudo chmod a+r /etc/apt/keyrings/docker.asc
+          echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+            $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+            sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+          sudo apt-get update
+          sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+          sudo usermod -aG docker $USER
+          sudo apt-get install acl
+          sudo setfacl --modify user:$USER:rw /var/run/docker.sock
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v5
