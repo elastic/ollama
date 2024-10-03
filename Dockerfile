@@ -71,8 +71,6 @@ RUN --mount=type=cache,target=/root/.ccache \
     go build -trimpath -o dist/linux-amd64/bin/ollama .
 RUN cd dist/linux-$GOARCH && \
     tar --exclude runners -cf - . | pigz --best > ../ollama-linux-$GOARCH.tgz
-RUN cd dist/linux-$GOARCH-rocm && \
-    tar -cf - . | pigz --best > ../ollama-linux-$GOARCH-rocm.tgz
 
 FROM --platform=linux/arm64 cpu-build-arm64 AS build-arm64
 ENV CGO_ENABLED=1
