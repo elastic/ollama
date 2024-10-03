@@ -250,8 +250,7 @@ jobs:
       - name: Set Version
         shell: bash
         run: |
-          echo "VERSION=${{ github.sha }}" >> $GITHUB_ENV
-          echo "RELEASE_VERSION=${{ github.sha }}" >> $GITHUB_ENV
+          echo "VERSION=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
       - name: Retrieve built artifact
         uses: actions/download-artifact@v4
         with:
@@ -265,18 +264,10 @@ jobs:
           cat dist/sha256sum.txt
       - name: Create or update Release
         run: |
-          echo "Looking for existing release for ${{ env.RELEASE_VERSION }}"
-          OLD_TAG=$(gh release ls --json name,tagName | jq -r ".[] | select(.name == \"${{ env.RELEASE_VERSION }}\") | .tagName")
-          if [ -n "$OLD_TAG" ]; then
-            echo "Updating release ${{ env.RELEASE_VERSION }} to point to new tag ${{ github.sha }}"
-            gh release edit ${OLD_TAG} --tag ${{ github.sha }}
-          else
-            echo "Creating new release ${{ env.RELEASE_VERSION }} pointing to tag ${{ github.sha }}"
-            gh release create ${{ github.sha }} \
-              --title ${{ env.RELEASE_VERSION }} \
-              --draft \
-              --generate-notes \
-              --prerelease
-          fi
-          echo "Uploading artifacts for tag ${{ github.sha }}"
-          gh release upload ${{ github.sha }} dist/* --clobber
+          echo "Creating new release ${{ env.VERSION }} pointing to tag ${{ env.VERSION }}"
+          gh release create ${{ env.VERSION }} \
+            --title ${{ env.VERSION }} \
+            --generate-notes \
+            --prerelease
+          echo "Uploading artifacts for tag ${{ env.VERSION }}"
+          gh release upload ${{ env.VERSION }} dist/* --clobber
